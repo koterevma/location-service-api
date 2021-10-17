@@ -1,7 +1,7 @@
 from datetime import datetime
 from mysql.connector import errorcode
 from typing import Dict, Optional, Any
-from queries import add_data_query
+from queries import add_data_query, create_table_query
 import mysql.connector
 import os
 
@@ -39,6 +39,16 @@ def _get_config() -> Dict[str, Any]:
     return conf
 
 
+def _create_table() -> None:
+    conn_config = _get_config()
+    conn = _connect_to_database(conn_config)
+    with conn.cursor() as cursor:
+        cursor.execute(create_table_query)
+        conn.commit()
+
+    conn.close()
+
+
 def _connect_to_database(config: Dict[str, Any]) -> Optional[mysql.connector.MySQLConnection]:
     try:
         conn = mysql.connector.connect(**config)
@@ -55,6 +65,7 @@ def _connect_to_database(config: Dict[str, Any]) -> Optional[mysql.connector.MyS
 
 def insert(data: Dict[str, Any]) -> None:
     conn_config = _get_config()
+    # TODO move error texts to _connect_to_database
     try:
         conn = _connect_to_database(conn_config)
     except AccessError:
@@ -78,6 +89,9 @@ def insert(data: Dict[str, Any]) -> None:
         else:
             conn.commit()
             
-
     conn.close()
+
+
+if __name__ == '__main__':
+    _create_table()
 
