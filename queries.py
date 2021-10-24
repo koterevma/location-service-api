@@ -12,5 +12,12 @@ add_data_query = (
 )
 
 get_all_data_query = (
-    "SELECT * FROM loc"
+    "SELECT * FROM loc ORDER BY date ASC"
 )
+
+get_period_data_query = (
+    "SELECT * FROM loc "
+    "WHERE date BETWEEN %s AND %s "
+    "ORDER BY date ASC"
+)
+

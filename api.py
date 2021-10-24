@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import db
 import json
-from flask import Flask
-from markupsafe import escape
+from flask import Flask, escape, render_template, request
 
 
 app = Flask(__name__)
@@ -16,10 +15,11 @@ def greet() -> str:
 @app.route("/insert/<string:date>/<string:coords>")
 def insert(date: str, coords: str) -> str:
     try:
-        latitude, longitude = coords.split(',')
+        # print(request.args.get('token', ''))
+        latitude, longitude = str(escape(coords)).split(',')
         db.insert(
             dict(
-                date=date,
+                date=str(escape(date)),
                 latitude=latitude,
                 longitude=longitude
             )
@@ -32,28 +32,37 @@ def insert(date: str, coords: str) -> str:
 
 @app.route("/get")
 def get() -> str:
+    from_date = request.args.get('from')
+    to_date = request.args.get('to')
+
+    if from_date is None and to_date is None:
+        try:
+            data = db.get_all_data()
+        except Exception as e:
+            return "ERROR " + str(e)
+        else:
+            return json.dumps(data)
+
     try:
-        data = db.get_all_data()
+        data = db.get_period_data(from_date, to_date)
     except Exception as e:
         return "ERROR " + str(e)
     else:
-        return json.dumps(data)
+        return data
+
+
+'''
+TODO get data for today, for last 12 hours, for last 3 hours and from date1 to date2
+TODO make /insert?token=TOKEN/... or some other way of authentification
+TODO make config.py where different configs are stored (such as sql_connector_config,
+     or app_config, or actualy, there is a way to have ql.connector.connect(option_files='my.conf') )
+TODO README.md
+'''
 
 
 @app.route("/help")
 def help() -> str:
-    help_text = '''
-    <p>/insert/&ltdatetime&gt/&ltcoords&gt</p>
-    insert values to database<br>
-    format for datetime: "YYYY-MM-DD HH:MM::SS" (space can be swapped by 'T', see examples below)<br>
-    format for coords: "1.12,2.21" (precision up to 8 digits after a point)<br>
-    <p>/get</p>
-    returns all values from database in json format<br>
-    <br>
-    <h2>Examples</h2><br>
-    http://localhost/api/insert/2021-10-17T15:44:00/20.12345678,30.12345678/<br>
-    http://localhost/api/get/<br>'''
-    return help_text
+    return render_template('help.html')
 
 
 if __name__ == '__main__':
