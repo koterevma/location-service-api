@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import db
 import json
-from flask import Flask, escape, render_template, request
+from flask import Flask, escape, render_template, request, jsonify
 
 
 app = Flask(__name__)
@@ -37,18 +37,14 @@ def get() -> str:
 
     if from_date is None and to_date is None:
         try:
-            data = db.get_all_data()
+            return jsonify(db.get_all_data())
         except Exception as e:
             return "ERROR " + str(e)
-        else:
-            return json.dumps(data)
 
     try:
-        data = db.get_period_data(from_date, to_date)
+        return jsonify(db.get_period_data(from_date, to_date))
     except Exception as e:
         return "ERROR " + str(e)
-    else:
-        return data
 
 
 '''
