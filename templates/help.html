@@ -4,7 +4,8 @@
 	<title>Help</title>
 </head>
 <body>
-	<p>/insert/&lt;datetime&gt;/&lt;coords&gt;</p>
+	<p>/insert</p>
+	POST with header "Content-Type: application/json"<br>
 	insert values to database<br>
 	format for datetime: "YYYY-MM-DD HH:MM:SS" (space can be swapped by 'T', see examples below)<br>
 	format for coords: "1.12,2.21" (precision up to 8 digits after a point)<br>
@@ -14,7 +15,7 @@
 	<h2>Examples</h2><br>
 	<p>
 	localhost for example urls should be replaced with server ip/domain on which api is hosted<br>
-	http://localhost/api/insert/2021-10-17T15:44:00/20.12345678,30.12345678<br>
+	http://localhost/api/insert  POST {"latitude":12, "longitude":11, date: "2021-10-17T15:44:00"}<br>
 	http://localhost/api/get<br>
 	http://localhost/api/get?from=2021-10-17T15:44:00<br>
 	http://localhost/api/get?from=2021-10-17T15:44:00&amp;to=2021-10-17T15:47:00<br>

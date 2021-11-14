@@ -12,18 +12,11 @@ def greet() -> str:
     return "Location api. /help for help"
 
 
-@app.route("/insert/<string:date>/<string:coords>")
-def insert(date: str, coords: str) -> str:
+@app.route("/insert", methods=['GET', 'POST'])
+def insert() -> str:
     try:
-        # print(request.args.get('token', ''))
-        latitude, longitude = str(escape(coords)).split(',')
-        db.insert(
-            dict(
-                date=str(escape(date)),
-                latitude=latitude,
-                longitude=longitude
-            )
-        )
+        data = request.get_json()
+        db.insert(data)
     except Exception as e:
         return "ERROR " + str(e)
     else:

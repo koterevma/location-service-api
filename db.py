@@ -130,8 +130,9 @@ def insert(data: Dict[str, Any]) -> None:
 
     with conn.cursor() as cursor:
         try:
+            if data.get('date') is None:
+                data['date'] = datetime.now().replace(microsecond=0)
             cursor.execute(add_data_query, data)
-            print(cursor.statement)
         except mysql.connector.Error as err:
             conn.close()
             raise ValueError("Data not added. " + str(err))
