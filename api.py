@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import db
 import json
-from flask import Flask, escape, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response
 
 
 app = Flask(__name__)
@@ -13,7 +13,7 @@ def greet() -> str:
 
 
 @app.route("/insert", methods=['GET', 'POST'])
-def insert() -> str:
+def insert() -> Response:
     try:
         data = request.get_json()
         db.insert(data)
@@ -24,7 +24,7 @@ def insert() -> str:
 
 
 @app.route("/get")
-def get() -> str:
+def get() -> Response:
     from_date = request.args.get('from')
     to_date = request.args.get('to')
 
@@ -40,6 +40,16 @@ def get() -> str:
         return "ERROR " + str(e)
 
 
+@app.route("/get/last")
+def get_last() -> Response:
+    count = request.args.get("count", "1")
+    if not count.isdigit():
+        return "ERROR count should be am integer"
+    try:
+        return jsonify(db.get_last_data(int(count)))
+    except Exception as e:
+        return "ERROR " + str(e)
+
 '''
 TODO get data for today, for last 12 hours, for last 3 hours and from date1 to date2
 TODO make /insert?token=TOKEN/... or some other way of authentification
@@ -50,7 +60,7 @@ TODO README.md
 
 
 @app.route("/help")
-def help() -> str:
+def help() -> Response:
     return render_template('help.html')
 
 

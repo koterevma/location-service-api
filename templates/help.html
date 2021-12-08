@@ -4,13 +4,15 @@
 	<title>Help</title>
 </head>
 <body>
-	<p>/insert</p>
-	POST with header "Content-Type: application/json"<br>
+	<p>/insert<br>
+	POST with header "Content-Type: application/json"</p>
 	insert values to database<br>
 	format for datetime: "YYYY-MM-DD HH:MM:SS" (space can be swapped by 'T', see examples below)<br>
 	format for coords: "1.12,2.21" (precision up to 8 digits after a point)<br>
-	<p>/get[?from=datetime][&amp;to=datetime]</p>
-	returns a list of all values from date1 to date2 in json format<br>
+	<p>/get[?from=datetime][&amp;to=datetime]<br>
+	returns a list of all values from date1 to date2 in json format</p>
+    <p>/get/last[?count=N]<br>
+    returns N last records. If count isn't specified returns last record</p>
 	<br>
 	<h2>Examples</h2><br>
 	<p>
@@ -19,6 +21,8 @@
 	http://localhost/get<br>
 	http://localhost/get?from=2021-10-17T15:44:00<br>
 	http://localhost/get?from=2021-10-17T15:44:00&amp;to=2021-10-17T15:47:00<br>
+    http://localhost/get/last<br>
+    http://localhost/get/last?count=4<br>
 	</p>
 </body>
 </html>

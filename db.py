@@ -5,7 +5,8 @@ from queries import (
     add_data_query,
     create_table_query,
     get_all_data_query,
-    get_period_data_query
+    get_period_data_query,
+    get_last_data_query
 )
 import mysql.connector
 import os
@@ -36,6 +37,7 @@ class EnvVarsUnset(Error):
         super().__init__(message)
 
 
+# TODO move the config to config.py file (or conf.json)
 def _get_config() -> Dict[str, Any]:
     conf = dict(
         host='127.0.0.1',
@@ -47,7 +49,7 @@ def _get_config() -> Dict[str, Any]:
     return conf
 
 
-def _connect_to_database(config: Dict[str, Any]) -> Optional[mysql.connector.MySQLConnection]:
+def _connect_to_database(config: Dict[str, Any]) -> mysql.connector.MySQLConnection:
     try:
         conn = mysql.connector.connect(**config)
     except mysql.connector.Error as err:
@@ -107,18 +109,29 @@ def _get_data(query: Tuple[str], *args) -> List[Dict[str, str]]:
             raise ValueError("Could not get data. " + str(err))
         else:
             rez = [dict(date=str(d), latitude=str(la), longitude=str(lo)) for d, la, lo in cursor]
-    
+
     conn.close()
     return {"result": rez}
 
 
-def get_all_data() -> Dict[str, str]:
+def get_all_data() -> Dict:
     return _get_data(get_all_data_query)
 
 
-def get_period_data(date_from: Optional[str], date_to: Optional[str]) -> Tuple[str, str]:
+def get_period_data(date_from: Optional[str], date_to: Optional[str]) -> Dict:
     date_from, date_to = map(str, _parse_dates(date_from, date_to))
     return _get_data(get_period_data_query, date_from, date_to)
+
+
+def get_last_data(count: int) -> Dict:
+    if count < 1:
+        raise ValueError(f"{count=} is not a valid number")
+
+    # Since we are getting data in descending order (due to query)
+    # we should reverse it before sending to user
+    result = _get_data(get_last_data_query, count)
+    result["result"].reverse()
+    return result
 
 
 def insert(data: Dict[str, Any]) -> None:
@@ -138,10 +151,10 @@ def insert(data: Dict[str, Any]) -> None:
             raise ValueError("Data not added. " + str(err))
         else:
             conn.commit()
-            
+
     conn.close()
 
 
 if __name__ == '__main__':
-    _create_table()
+    print(get_last_data())
 
