@@ -4,14 +4,17 @@
 	<title>Help</title>
 </head>
 <body>
-	<p>/insert<br>
+	<p>
+	<h3>/insert</h3>
 	POST with header "Content-Type: application/json"</p>
 	insert values to database<br>
 	format for datetime: "YYYY-MM-DD HH:MM:SS" (space can be swapped by 'T', see examples below)<br>
-	format for coords: "1.12,2.21" (precision up to 8 digits after a point)<br>
-	<p>/get[?from=datetime][&amp;to=datetime]<br>
+	format for coords: "1.12,2.21" (precision up to 6 digits after a point)<br>
+	<p>
+	<h3>/get[?from=datetime][&amp;to=datetime]</h3>
 	returns a list of all values from date1 to date2 in json format</p>
-    <p>/get/last[?count=N]<br>
+    <p>
+    <h3>/get/last[?count=N]</h3>
     returns N last records. If count isn't specified returns last record</p>
 	<br>
 	<h2>Examples</h2><br>
@@ -23,6 +26,9 @@
 	http://localhost/get?from=2021-10-17T15:44:00&amp;to=2021-10-17T15:47:00<br>
     http://localhost/get/last<br>
     http://localhost/get/last?count=4<br>
+	</p>
+	<p>
+	Resourses: <a href="https://palletsprojects.com/p/flask/">Flask oficial web site</a>, <a href="https://www.mysql.com/">MySQL</a>, <a href="https://nginx.org/ru/">nginx</a>, <a href="https://gunicorn.org/">Gunicorn WSGI server</a>
 	</p>
 </body>
 </html>
