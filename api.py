@@ -12,15 +12,18 @@ def greet() -> str:
     return "Location api. /help for help"
 
 
-@app.route("/insert", methods=['GET', 'POST'])
+@app.route("/insert", methods=['POST'])
 def insert() -> Response:
     try:
         data = request.get_json()
+        if data is None:
+            return "ERROR, no json data found in POST request", 400
+
         db.insert(data)
     except Exception as e:
-        return "ERROR " + str(e)
-    else:
-        return "Data inserted into database"
+        return "ERROR " + str(e), 400
+
+    return "Data inserted into database"
 
 
 @app.route("/get")
@@ -32,23 +35,23 @@ def get() -> Response:
         try:
             return jsonify(db.get_all_data())
         except Exception as e:
-            return "ERROR " + str(e)
+            return "ERROR " + str(e), 400
 
     try:
         return jsonify(db.get_period_data(from_date, to_date))
     except Exception as e:
-        return "ERROR " + str(e)
+        return "ERROR " + str(e), 400
 
 
 @app.route("/get/last")
 def get_last() -> Response:
     count = request.args.get("count", "1")
     if not count.isdigit():
-        return "ERROR count should be am integer"
+        return "ERROR count should be am integer", 400
     try:
         return jsonify(db.get_last_data(int(count)))
     except Exception as e:
-        return "ERROR " + str(e)
+        return "ERROR " + str(e), 400
 
 '''
 TODO get data for today, for last 12 hours, for last 3 hours and from date1 to date2
